@@ -5,6 +5,7 @@ import Canvas from '../components/canvas/canvas'
 const IndexPage = () => {
   return (
     <div>
+      <h1>Canvas</h1>
       <Canvas />
     </div>
   )

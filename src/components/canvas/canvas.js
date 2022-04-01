@@ -8,7 +8,7 @@ const Canvas = (props) => {
 	};
 
 	const draw = (p5) => {
-		p5.background(100, 100, 100, 0);
+		p5.background(100, 100, 100, 1);
 		// p5.ellipse(p5.mouseX, p5.mouseY, 70, 70);
 	};
 
