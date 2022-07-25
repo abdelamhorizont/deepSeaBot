@@ -1,5 +1,5 @@
 import React from "react";
-// import Sketch from "react-p5";
+import Sketch from "react-p5";
 import rosa from './rosa2.png'; // Tell webpack this JS file uses this image
 
 const Canvas = () => {
