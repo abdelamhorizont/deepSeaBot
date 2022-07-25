@@ -13,16 +13,16 @@ const Sketch = Loadable(
 const Canvas = () => {
 	let rosaBrush;
 
-	// const isBrowser = () => typeof window !== "undefined"
-	// const windowWitdh = isBrowser() && window.screen.width
-	// const windowheight = isBrowser() && window.screen.height
+	const isBrowser = () => typeof window !== "undefined"
+	const windowWitdh = isBrowser() && window.screen.width
+	const windowheight = isBrowser() && window.screen.height
 
    // //  const preload = (p5) => {
 	// // 	rosaBrush = p5.loadImage('./rosa2.png');
    // //  }
 
 	const setup = (p5, canvasParentRef) => {
-		p5.createCanvas(500, 500).parent(canvasParentRef);
+		p5.createCanvas(windowWitdh, windowheight).parent(canvasParentRef);
         p5.colorMode(p5.HSB);
 	};
 
@@ -35,7 +35,6 @@ const Canvas = () => {
 
 	return (
 		<div style={{position : "fixed", top : "0rem", zIndex : "1"}}>
-			hey
 			<Sketch setup={setup} draw={draw} />
 		</div>
 	)
