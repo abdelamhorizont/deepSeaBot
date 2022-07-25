@@ -8,7 +8,8 @@ const Sketch = Loadable(
   () => import("react-p5")
 );
 
-export default LoadablePage;
+// export default LoadablePage;
+
 const Canvas = () => {
 	let rosaBrush;
 
