@@ -1,7 +1,14 @@
 import React from "react";
-import Sketch from "react-p5";
+// import Sketch from "react-p5";
 import rosa from './rosa2.png'; // Tell webpack this JS file uses this image
 
+import Loadable from "@loadable/component"
+
+const Sketch = Loadable(
+  () => import("react-p5")
+);
+
+export default LoadablePage;
 const Canvas = () => {
 	let rosaBrush;
 
