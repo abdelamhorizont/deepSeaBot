@@ -1,5 +1,6 @@
 import * as React from "react"
 import Canvas from '../components/canvas/canvas'
+import Brush from '../components/brush/brush'
 
 import './reset.css'
 
@@ -7,7 +8,6 @@ import './reset.css'
 const IndexPage = () => {
   return (
     <div>
-      <h1>Canvas</h1>
       <Canvas />
     </div>
   )
