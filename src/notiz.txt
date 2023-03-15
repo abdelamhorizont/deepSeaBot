@@ -1,0 +1,3 @@
++ clean up code into components
++ osc function as array to kkep the numbers
++ shapes from json.files

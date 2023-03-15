@@ -1,9 +1,13 @@
 import React from "react";
 import { useRef, useEffect, useState } from "react";
-// import { motion } from "framer-motion"
+// import { motion, AnimatePresence } from "framer-motion"
+
+import Shape from "../shape/shape";
 
 import rosa from './rosa2.png'; // Tell webpack this JS file uses this image
-import './canvas.css'
+import testVideo from '../../assets/ocean-glow-up.mp4'
+
+import './canvas.scss'
 
 import Loadable from "@loadable/component"
 const Sketch = Loadable(
@@ -16,22 +20,28 @@ const isBrowser = () => typeof window !== "undefined"
 const windowWitdh = isBrowser() && window.innerWidth
 const windowheight = isBrowser() && window.innerHeight
 
-
-export default function Canvas() {
-	const img = useRef(null)
-	const brushDivs = useRef(null)
+export default function Canvas({ getNoise }) {
 	let cnv;
+	let noiseArray = []
+
+	const [xoff, setxoff] = useState(0)
+	const [noise, setNoise] = useState([0])
 
 	const [cursor, setCursor] = useState({
 		x: 0,
 		y: 0
-	});
+	})
 
 	const [shape, setShape] = useState({
-		positions: []
+		positions: [],
+		osc: 0,
+		key: 0
 	})
 
 	const [shapes, setShapes] = useState([shape])
+	shapes.filter(() => {
+		return shapes.positions?.length > 1;
+	})
 
 	const [brush, setBrush] = useState({
 		color: rosa,
@@ -44,14 +54,17 @@ export default function Canvas() {
 
 	const setup = (p5, canvasParentRef) => {
 		cnv = p5.createCanvas(windowWitdh, windowheight).parent(canvasParentRef)
-		p5.colorMode(p5.HSB)
-		p5.rectMode(p5.CENTER)
-		// brush.rosa = p5.loadImage(rosa)
+
+		for (let i = 0; i < 10; i += 0.05) {
+			noiseArray.push(Math.round((p5.noise(i) * 10) * 100) / 100)
+			setNoise(noiseArray)
+			getNoise(noiseArray)
+		}
+
 	}
 
 	const draw = (p5) => {
 		p5.background(0, 0)
-		drawing(p5)
 	}
 
 	const drawing = (p5) => {
@@ -74,9 +87,10 @@ export default function Canvas() {
 
 	const mouseDragged = (p5) => {
 		setShape({
+			...shape,
 			positions: [...shape?.positions, {
-				x: p5.mouseX,
-				y: p5.mouseY
+				x: Math.floor(p5.mouseX),
+				y: Math.floor(p5.mouseY)
 			}]
 		})
 	}
@@ -84,12 +98,14 @@ export default function Canvas() {
 	const mouseReleased = (p5) => {
 		// const shapeCopy = JSON.parse(JSON.stringify(shapes));
 		setShape({
-			positions: []
+			...shape,
+			positions: [],
+			key: shapes.length
 		})
 
 		setShapes([...shapes, shape])
-		console.log(shapes);
 	}
+	// console.log(shapes);
 
 	class NoiseLoop {
 		constructor(diameter, min, max) {
@@ -122,65 +138,78 @@ export default function Canvas() {
 		position: "absolute",
 	}
 
+	const variants = {
+		initial: { opacity: 1 },
+		animate: { opacity: 1 }
+	}
+
 	return (
-		// <div style={{ position: "fixed", top: "0rem", zIndex: "1" }}>
 		<div onPointerMove={e => {
 			setCursor({
 				x: e.clientX,
 				y: e.clientY
 			})
 		}}
-			style={{
-				position: 'relative',
-				width: '100vw',
-				height: '100vh',
-				backgroundColor: "black",
-				cursor: "none"
-			}}
+			className="canvas-wrapper"
 		>
-			{/* framer motio test */}
-			{/* <motion.div animate={{ x: 100 }}>
+			{/* framer motion test */}
+			{/* <AnimatePresence> */}
+			<motion.div
+				// initial={false}
+				variants={variants}
+				initial="initial"
+				animate="animate"
+				transition={{
+					ease: "easeInOut",
+					duration: 1,
+					repeat: Infinity,
+				}}
+			>
 				<div style={motionstyle}></div>
-			</motion.div> */}
+			</motion.div>
 
 			{/* cursor brush style */}
-			<div style={cursorStyle}></div>
+			<div style={cursorStyle} className=""></div>
 
 			{/* svg drawings */}
 
-			<div style={{ position: "fixed", top: "0rem", zIndex: "1" }}>
-				<svg height={windowheight} width={windowWitdh} fill="yellow">
-					<path d={"M" + shape.positions[0]?.x + " " + shape.positions[0]?.y + "L" +
-						shape.positions?.map((pos) =>
-							+ pos.x + " " + pos.y
-						)
-						+ " Z"} />
-				</svg>
-			</div>
+			{/* background */}
+			{/* <motion.svg height={windowheight} width={windowWitdh} >
+				<defs>
+					<motion.radialGradient
+						id="bGgradient"
+						fr={0.2}
+						fx={0.32}
+						fy={0.32}
+						r={0.7}
+						animate={{ fr: 0.05, fx: 0.2, fy: 0.35, r: 0.6 }}
+						transition={{
+							repeat: Infinity,
+							repeatType: "mirror",
+							ease: "easeInOut",
+							duration: 3,
+						}}
+					>
+						<stop offset="0%" stopColor="blue" />
+						<stop offset="100%" stopColor="FloralWhite" />
+					</motion.radialGradient>
+				</defs>
 
-			{
-				shapes.map((shape) => {
-					return (
-						<div style={{ position: "fixed", top: "0rem", zIndex: "1" }}>
-							<svg height={windowheight} width={windowWitdh} fill="yellow">
-								<path d={"M" + shape.positions[0]?.x + " " + shape.positions[0]?.y + "L" +
-									shape.positions?.map((pos) =>
-										+ pos.x + " " + pos.y
-									)
-									+ "Z"} />
-							</svg>
-						</div>
-					)
-				})
-			}
+				<rect
+					width="100"
+					height="100"
+					fill='url(bGgradient)'
+				/>
 
-			{/* {
-				brush.positions.map((pos) =>
-					<div className="brush" ref={brushDivs} style={{ position: "fixed", top: (pos.y - 50) + "px", left: (pos.x - 50) + "px", zIndex: "3" }}>
-						<div style={cursorStyle}></div>
-					</div>
-				)
-			} */}
+				<motion.path className="shape"
+					initial={{
+						fill: 'url(bGgradient)'
+					}}
+				/>
+
+			</motion.svg> */}
+
+
 
 			<Sketch
 				style={{ position: "fixed", top: "0rem", zIndex: "1" }}
@@ -189,6 +218,20 @@ export default function Canvas() {
 				mouseDragged={mouseDragged}
 				mouseReleased={mouseReleased}
 			/>
+
+			{shapes?.length > 0 &&
+				shapes.map((shape, i) => {
+					// console.log(shape);
+					if (shape.positions.length > 1) {
+						return (
+							<Shape key={i} shape={shape} noise={noise} video={testVideo} />
+						)
+					}
+				})
+			}
+			
+			<Shape shape={shape} noise={noise} />
+
 		</div>
 	)
 }
