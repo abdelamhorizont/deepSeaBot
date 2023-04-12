@@ -1,18 +1,33 @@
 import React from "react";
 import { useState, useRef, useEffect } from "react";
+
 import './shape.scss'
 
 import osc from '../../functions/osc.js'
-import testImg from '../../assets/tree.jpg'
-import testVideo from '../../assets/ocean-glow-up.mp4'
+// import testImg from '../../assets/images/tree.jpg'
 
 const isBrowser = () => typeof window !== "undefined"
 const windowWitdh = isBrowser() && window.innerWidth
-const windowheight = isBrowser() && window.innerHeight
+const windowHeight = isBrowser() && window.innerHeight
 
 const { motion } = require("framer-motion");
 
-export default function Shape({ shape, noise, video }) {
+export default function Shape({ shape, noise, live }) {
+
+   useEffect(() => {
+      const handleWindowResize = () => {
+         //   setWindowWidth(window.innerWidth);
+         windowWitdh = window.innerWidth
+         windowHeight = window.innerHeight
+      };
+
+      window.addEventListener('resize', handleWindowResize);
+
+      return () => {
+         window.removeEventListener('resize', handleWindowResize);
+      };
+   });
+
    const [noiseArray, setNoiseArray] = useState(noise)
 
    const [shapeBoundingBox, setShapeBoundingBox] = useState("1000")
@@ -22,18 +37,20 @@ export default function Shape({ shape, noise, video }) {
       setShapeBoundingBox(shapeObj?.current?.getBoundingClientRect())
    }, [shapeBoundingBox])
 
-   function osc(i) {
-      return (
-         Math.sin(noise[i]) * 10
-         // 15
-      )
-   }
+   let factor = 40
+   let shapeType = shape.type
 
-   function oscY(i) {
-      return (
-         Math.cos(noise[i]) * 10
-         // 15
-      )
+   function osc(i, cos) {
+      if (cos === true) {
+         return (
+            Math.cos(noise[i]) * factor
+         )
+      } else {
+         return (
+            Math.sin(noise[i]) * factor
+         )
+      }
+
    }
 
    shape.positions?.filter(pos => {
@@ -42,43 +59,30 @@ export default function Shape({ shape, noise, video }) {
 
    const variants = {
       hidden: {
-         d: "M " + (shape?.positions[0]?.x) + "," + shape?.positions[0]?.y + " Q " +
+         d: "M " + (shape?.positions[0]?.x) + "," + shape?.positions[0]?.y + " S " +
             shape.positions?.map((pos, i) => + (pos.x) + "," + (pos.y)).join(' ') + " Z",
       },
       visible: {
          d: [
-            "M " + (shape?.positions[0]?.x) + "," + shape?.positions[0]?.y + " Q " +
-            shape.positions?.map((pos, i) => + (pos.x + osc(i)) + "," + (pos.y + oscY(i))).join(' ') + " Z",
-            "M " + (shape?.positions[0]?.x) + "," + shape?.positions[0]?.y + " Q " +
-            shape.positions?.map((pos, i) => + (pos.x - osc(i)) + "," + (pos.y - oscY(i))).join(' ') + " Z",
-            "M " + (shape?.positions[0]?.x) + "," + shape?.positions[0]?.y + " Q " +
-            shape.positions?.map((pos, i) => + (pos.x + osc(i)) + "," + (pos.y + oscY(i))).join(' ') + " Z",
+            "M " + (shape?.positions[0]?.x) + "," + shape?.positions[0]?.y + " S " +
+            shape.positions?.map((pos, i) => + (pos.x + osc(i)) + "," + (pos.y + osc(i, true))).join(' ') + " Z",
+            "M " + (shape?.positions[0]?.x) + "," + shape?.positions[0]?.y + " S " +
+            shape.positions?.map((pos, i) => + (pos.x - osc(i)) + "," + (pos.y - osc(i, true))).join(' ') + " Z",
+            "M " + (shape?.positions[0]?.x) + "," + shape?.positions[0]?.y + " S " +
+            shape.positions?.map((pos, i) => + (pos.x + osc(i)) + "," + (pos.y + osc(i, true))).join(' ') + " Z",
          ],
+         // x: [osc(5), -osc(5)],
+         // y: [oscY(5), -oscY(5)],
          // fill: ['pink', 'blue', 'pink'],
          // fill: 'black',
          transition: {
-            duration: 1,
+            // duration: 1,
             repeat: Infinity,
+            duration: osc(5) / 5,
             // when: "beforeChildren",
             // staggerChildren: 0.3,
          },
       },
-   }
-
-   const softBrushVariants = {
-      visible: (brush) => ({
-         x: [osc(brush.key), -osc(brush.key), osc(brush.key)],
-         y: [oscY(brush.key), -oscY(brush.key), oscY(brush.key)],
-         // background: [
-         //    "radial-gradient(farthest-side at 50% 50%," + 'black' + " , transparent",
-         //    "radial-gradient(farthest-side at 50% 50%," + 'cyan' + " , transparent",
-         //    "radial-gradient(farthest-side at 50% 50%," + 'black' + " , transparent"],
-         transition: {
-            ease: "easeInOut",
-            duration: 1,
-            repeat: Infinity,
-         },
-      })
    }
 
    const motionstyle = {
@@ -89,61 +93,17 @@ export default function Shape({ shape, noise, video }) {
    }
 
    return (
-      <div key={shape.key} style={{ position: "fixed", top: "0rem", zIndex: "2" }}>
-
-         {/* softBrush */}
-         {
-            shape.positions?.map((pos, i) => {
-               let brushWidth = 120
-
-               let brush = {
-                  color: 'white',
-                  width: 120,
-                  x: pos.x - brushWidth / 2,
-                  y: pos.y - brushWidth / 2,
-                  key: i
-               }
-
-               return (
-                  <motion.div
-                     // variants={softBrushVariants}
-                     animate={{
-                        x: [osc(brush.key), -osc(brush.key), osc(brush.key)],
-                        y: [oscY(brush.key), -oscY(brush.key), oscY(brush.key)],
-                     }}
-                     // custom={brush}
-                     // key={i}
-                     style={{
-                        background: "radial-gradient(farthest-side at 50% 50%," + 'black' + " , transparent",
-                        width: brush.width,
-                        height: brush.width,
-                        position: "absolute",
-                        top: brush.y,
-                        left: brush.x,
-                        color: 'white',
-                        opacity: 0.5,
-                        zIndex: 10
-                     }}
-                  >
-                  </motion.div>
-               )
-            })
-         }
+      <div key={shape.key} style={{ position: "fixed", top: "0rem", zIndex: "2", cursor: "none" }}>
 
          <div key={shape.key} class="wrapper">
-            {/* <video key={"key"} width="100%" height="100%" muted autoPlay loop webkit-playsinline="true" playsInline>
-               <source src={testVideo} type="video/mp4" />
-            </video> */}
             <rect x="0" y="0" width="100%" height="100%" fill="blue" />
 
             {/* svg shapes */}
-            <motion.svg height={windowheight} width={windowWitdh} key={shape.key}
-               initial={{ opacity: 1, x:0, y: 0 }}
-               animate={{ opacity: 1, x: osc(shape.key), y: oscY(shape.key) }}
-               transition={{
-                  duration:1
-               }}
+            <motion.svg height={windowHeight*1.5} width={windowWitdh} key={shape.key}
+            // initial={{ opacity: 1, x: 0, y: 0 }}
+            // animate={{ opacity: 1, x: osc(shape.key), y: oscY(shape.key) }}
             >
+               {/* inside gradient mask */}
                <defs>
                   <motion.radialGradient
                      id="gradient1"
@@ -161,30 +121,21 @@ export default function Shape({ shape, noise, video }) {
                         duration: 3,
                      }}
                   >
-                     <stop offset="0%" stopColor="red" />
+                     <stop offset="0%" stopColor="white" />
                      <stop offset="50%" stopColor="blue" />
                      <stop offset="100%" stopColor="lightblue" />
                   </motion.radialGradient>
                </defs>
 
-               <defs>
-                  <pattern id="img1" width="1" height="1"
-                     patternContentUnits="objectBoundingBox">
-                     <image href={testImg} x="-0.5" y="0" width="2" height="2" />
-                  </pattern>
-               </defs>
-
+               {/* image mask */}
                {/* <defs>
-                  <pattern id="video" width="1" height="1"
+                  <pattern id={'imgMask' + shape.key} width="1" height="1"
                      patternContentUnits="objectBoundingBox">
-                     <foreignObject width="1000" height="2" x="0.5" y="0">
-                        <video key={"key"} width="2" height="100" muted autoPlay loop webkit-playsinline="true" playsInline>
-                           <source src={testVideo} type="video/mp4" />
-                        </video>
-                     </foreignObject>
+                     <image href={shape.imgSource} x="-0.5" y="0" width="2" height="2" />
                   </pattern>
                </defs> */}
 
+               {/* video mask */}
                <defs>
                   <mask id={'mask' + shape.key} x="0" y="0" width="100%" height="100%" >
                      <rect x="0" y="0" width="100%" height="100%" fill="white" />
@@ -204,30 +155,97 @@ export default function Shape({ shape, noise, video }) {
                   </mask>
                </defs>
 
-               {
+               {(shapeType === "videoShape" || shapeType === "imageShape") &&
                   <motion.path className="shape"
                      ref={shapeObj}
                      initial="hidden"
                      animate="visible"
                      variants={variants}
                      style={{
-                        // fill: 'url(#gradient1)',
-                        // fill: 'url(#img1)',
-                        fill: 'black',
+                        fill: shapeType === "videoShape" ? 'black' : shapeType === "imageShape" ? 'url(#imgMask' + shape.key + ')' : 'url(#gradient1)',
                      }}
                   />
                }
 
-               <foreignObject className="video-shape" mask={"url(#mask" + shape.key + ")"} width={shapeBoundingBox?.width} height={shapeBoundingBox?.height} x={shapeBoundingBox?.x} y={shapeBoundingBox?.y}>
-                  <video key={"key"} width="100%" height="100%" muted autoPlay loop webkit-playsinline="true" playsInline>
-                     <source src={testVideo} type="video/mp4" />
-                  </video>
-               </foreignObject>
+               {shapeType === "videoShape" &&
+                  <foreignObject className="video-shape" mask={"url(#mask" + shape.key + ")"} width={shapeBoundingBox?.width} height={shapeBoundingBox?.height} x={shapeBoundingBox?.x} y={shapeBoundingBox?.y}>
+                     <video width="100%" height="100%" autoPlay loop webkit-playsinline="true" playsInline>
+                        <source src={shape.videoSource} type="video/mp4" />
+                     </video>
+                  </foreignObject>
+               }
 
+               {shapeType === "imageShape" &&
+                  <foreignObject className="video-shape" mask={"url(#mask" + shape.key + ")"} width={shapeBoundingBox?.width} height={shapeBoundingBox?.height} x={shapeBoundingBox?.x} y={shapeBoundingBox?.y}>
+                     <img src={shape.imgSource} width="100%" height="100%" draggable="false" />
+                  </foreignObject>
+               }
 
-               {/* <image href={testImg} x="-0.5" y="0" width="800" height="800" />
-            <rect x="0" y="0" width="1000" height="800" fill="yellow" mask="url(#myMask)" /> */}
+               {/* softbrush */}
+               <defs>
+                  <radialGradient id="myGradient">
+                     <stop offset="0%" stop-color="rgba(0,0,00,0.5)" />
+                     <stop offset="100%" stop-color="rgba(200,200,300,0)" />
+                     {/* <stop offset="0%" stop-color="rgba(200,200,200,0.5)" />
+                     <stop offset="100%" stop-color="rgba(200,200,300,0)" /> */}
+                  </radialGradient>
+               </defs>
 
+               <defs>
+                  <radialGradient id="softVideo">
+                     <stop offset="0%" stop-color="rgba(0,0,0,1)" />
+                     <stop offset="100%" stop-color="rgba(0,0,0,0)" />
+                  </radialGradient>
+               </defs>
+
+               {/* video soft brush */}
+               {/* {shapeType === "videoShape" &&
+                  shape.positions?.map((pos, i) => {
+                     if (i % 2 == 0) {
+                        return (
+                           <motion.circle cx={pos.x} cy={pos.y} r={80} fill="url('#softVideo')" style={{ opacity: 0.9 }} className="black-circle"
+                              animate={{
+                                 x: [osc(i), -osc(i), osc(i)],
+                                 y: [osc(i, true), -osc(i, true), osc(i, true)],
+                                 // r: [50, i],
+                                 // r: [50, i * 2 ],
+                                 // cx: [ 0, windowWitdh ]
+                              }}
+                              transition={{
+                                 ease: "easeInOut",
+                                 duration: osc(5) / 5,
+                                 repeat: Infinity,
+                                 // repeatType: "mirror",
+                              }}
+                           />
+                        )
+                     }
+                  })
+               } */}
+
+               {live &&
+                  shape.positions?.map((pos, i) => {
+                     if (i <= 100) {
+                        return (
+                           <motion.circle cx={pos.x} cy={pos.y} r={i} fill="url('#myGradient')" style={{ opacity: 0.9 }} className="soft-circle"
+                              animate={{
+                                 x: [osc(i), -osc(i)],
+                                 y: [osc(i, true), -osc(i, true)],
+                                 r: [50, i],
+                                 // r: [50, i * 2 ],
+                                 // cx: [ 0, windowWitdh ]
+                              }}
+                              transition={{
+                                 ease: "easeInOut",
+                                 duration: noise[i] / 5,
+                                 repeat: Infinity,
+                                 repeatType: "mirror",
+                              }}
+                           />
+                        )
+                     }
+                  })
+               }
             </motion.svg>
          </div>
 

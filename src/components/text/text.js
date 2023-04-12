@@ -11,7 +11,7 @@ function map_range(value, low1, high1, low2, high2) {
    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
-export default function Text({ text, noise }) {
+export default function Text({ text, noise, pos }) {
    const [noiseArray, setNoiseArray] = useState(noise)
    const [spacing, setspacing] = useState(0)
 
@@ -27,7 +27,7 @@ export default function Text({ text, noise }) {
    }
 
    // noise = noise.map((value) => value + 'rem')
-   console.log(osc(1));
+   // console.log(osc(1));
 
    const variants = {
       hidden: { letterSpacing: '0rem' },
@@ -50,11 +50,11 @@ export default function Text({ text, noise }) {
 
    let textArray = []
 
-   text.map(function (letter, i) {
+   text?.map(function (letter, i) {
       textArray.push(letter)
    })
 
-   text = textArray.map((letter, i) =>
+   text = textArray?.map((letter, i) =>
       <motion.span
          initial="hidden"
          animate="visible"
@@ -64,7 +64,8 @@ export default function Text({ text, noise }) {
             repeat: Infinity,
             repeatType: "mirror",
             ease: "easeInOut",
-            duration: 1,
+            // duration: 1,
+            duration: noise[i]/3,
          }}
          variants={variants}
       >
@@ -73,8 +74,10 @@ export default function Text({ text, noise }) {
    )
 
    return (
+      <div className="text-wrapper">      
       <motion.div
          className='text'
+         style={{marginTop: pos + 'vh'}}
          // initial="hidden"
          // animate={{ marginLeft: [osc(1) * 5, osc(10) * 5] }}
          // key={text}
@@ -88,5 +91,6 @@ export default function Text({ text, noise }) {
          <p>{text}
          </p>
       </motion.div>
+      </div>
    )
 }
