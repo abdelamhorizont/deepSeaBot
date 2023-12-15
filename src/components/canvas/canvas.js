@@ -47,8 +47,40 @@ let brightOff = true
 const devices = [];
 
 export default function Canvas({ getNoise }) {
+	// let textArray = [
+	// 	// "OCEAN VIEW, PARADISE AIR, abdel am meer",
+	// 	"",
+	// 	"",
+	// 	// "البحر الأبيض  \n MARE MEDITERRANEUM  \n AKDENIZ  ",
+	// 	// "The Mediterranean Sea as a border, \n as a place, as a space", 
+	// 	// "- for wind, waves and ground, \n for journeys, for escape,",
+	// 	//  "for sea dwellers, cargo ships \n and narratives,",
+	// 	//   "for longing, for memories, \n for stagnation, for movement, for currents.",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "",
+	// 	  "Black Feminist Lessons from Marine Mammals by Alexis Pauline Gumbs,",
+	// 	  "‚Saying Water‘, a monologue by Roni Horn",
+	// 	  "PURPLE SEA — Amel Alzakout"
+	// ]
+
 	let textArray = [
 		// "OCEAN VIEW, PARADISE AIR, abdel am meer",
+		'',
+		'',
 		"the ocean as a place",
 		"the ocean as a space",
 		"beautiful glowing bubbles rising to the surface in 4K",
@@ -308,35 +340,35 @@ export default function Canvas({ getNoise }) {
 	const [activeShapes, setActiveShapes] = useState(shapes)
 	const [arrayLimitBool, setarrayLimitBool] = useState(false)
 
-	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-	const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+	// const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+	// const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
-	useEffect(() => {
-		const handleWindowResize = () => {
-			setWindowWidth(window.innerWidth);
-			setWindowHeight(window.innerHeight);
-			// windowWidth = window.innerWidth
-			// windowHeight = window.innerHeight
-		};
+	// useEffect(() => {
+	// 	const handleWindowResize = () => {
+	// 		setWindowWidth(window.innerWidth);
+	// 		setWindowHeight(window.innerHeight);
+	// 		// windowWidth = window.innerWidth
+	// 		// windowHeight = window.innerHeight
+	// 	};
 
-		window.addEventListener('resize', handleWindowResize);
+	// 	window.addEventListener('resize', handleWindowResize);
 
-		return () => {
-			window.removeEventListener('resize', handleWindowResize);
-		};
-	});
+	// 	return () => {
+	// 		window.removeEventListener('resize', handleWindowResize);
+	// 	};
+	// });
 
-	useEffect(() => {
-		const handleWindowResize = () => {
-			setWindowWidth(window.innerWidth);
-			setWindowHeight(window.innerHeight);
-			// windowWidth = window.innerWidth
-			// windowHeight = window.innerHeight
-		};
+	// useEffect(() => {
+	// 	const handleWindowResize = () => {
+	// 		setWindowWidth(window.innerWidth);
+	// 		setWindowHeight(window.innerHeight);
+	// 		// windowWidth = window.innerWidth
+	// 		// windowHeight = window.innerHeight
+	// 	};
 
-		window.addEventListener('resize', handleWindowResize);
+	// 	window.addEventListener('resize', handleWindowResize);
 
-	}, [])
+	// }, [])
 
 
 	shapes.filter(() => {
@@ -380,7 +412,6 @@ export default function Canvas({ getNoise }) {
 	}
 
 	// let video;
-
 
 	function gotDevices(p5, deviceInfos) {
 		if (!navigator.mediaDevices?.enumerateDevices) {
@@ -515,15 +546,15 @@ export default function Canvas({ getNoise }) {
 			setImgCount(0)
 		}
 
-		if (textCount >= textArray.length - 1) {
-			setTextCount(0)
-		}
+		// if (textCount >= textArray.length - 1) {
+		// 	setTextCount(0)
+		// }
 
-		if (shapeCount % 3 == 0) {
+		// if (shapeCount % 3 == 0) {
 			setTextCount((prev) => prev += 1)
-			settextPos(Math.floor(Math.random() * 95))
+			// settextPos(Math.floor(Math.random() * 95))
 			setText(textArray[textCount])
-		}
+		// }
 
 
 		// setActiveShapes(_.clone(shapes))
@@ -607,8 +638,8 @@ export default function Canvas({ getNoise }) {
 		}}
 			className="canvas-wrapper"
 			style={{
-				// backgroundColor: "rgba(200,0,0,1)",
-				// background: "linear-gradient(rgba(0,0,255,1), rgba(0,0,100,1))",
+				backgroundColor: "rgba(0,0,200,1)",
+				// background: "linear-gradient(rgba(0,0,255,1), rgba(0,0,100,1), rgba(0,0,255,1))",
 				cursor: "none",
 				zIndex: "10"
 			}}

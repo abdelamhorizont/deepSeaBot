@@ -77,7 +77,8 @@ export default function Text({ text, noise, pos }) {
       <div className="text-wrapper">      
       <motion.div
          className='text'
-         style={{marginTop: pos + 'vh'}}
+         style={{marginTop: 45 + 'vh'}}
+         // style={{marginTop: pos + 'vh'}}
          // initial="hidden"
          // animate={{ marginLeft: [osc(1) * 5, osc(10) * 5] }}
          // key={text}
