@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import './shape.scss'
 
 import osc from '../../functions/osc.js'
-// import testImg from '../../assets/images/tree.jpg'
 
 const isBrowser = () => typeof window !== "undefined"
 const windowWitdh = isBrowser() && window.innerWidth
@@ -16,7 +15,6 @@ export default function Shape({ shape, noise, live }) {
 
    useEffect(() => {
       const handleWindowResize = () => {
-         //   setWindowWidth(window.innerWidth);
          windowWitdh = window.innerWidth
          windowHeight = window.innerHeight
       };

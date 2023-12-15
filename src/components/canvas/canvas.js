@@ -1,13 +1,9 @@
 import React from "react";
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import _ from 'lodash'
-// import { motion, AnimatePresence } from "framer-motion"
 
 import Shape from "../shape/shape";
 import Text from '../text/text'
-
-// import video from '../../assets/videos/ocean-glow-up.mp4'
-// import testImg from '../../assets/images/tree.jpg'
 
 import './canvas.scss'
 import Loadable from "@loadable/component"
@@ -25,11 +21,12 @@ const Sketch = Loadable(
 	() => import("react-p5")
 )
 
-const { motion } = require("framer-motion");
+// const { motion } = require("framer-motion");
 
 const isBrowser = () => typeof window !== "undefined"
 const windowWidth = isBrowser() && window.innerWidth
 const windowHeight = isBrowser() && window.innerHeight
+
 let capture;
 let vScale = 16;
 
@@ -380,12 +377,9 @@ export default function Canvas({ getNoise }) {
 
 		for (let i = 0; i < 10; i += 0.05) {
 			noiseArray.push(Math.round((p5.noise(i) * 10) * 100) / 100)
-			// setNoise(noiseArray)
-			// getNoise(noiseArray)
 		}
-		// setNoise(noiseArray)
+
 		getNoise(noise)
-		// console.log(noiseArray);
 
 		p5.pixelDensity(1);
 	
@@ -395,13 +389,12 @@ export default function Canvas({ getNoise }) {
 			 var constraints = {
 				video: {
 				  deviceId: {
-					//  exact: "e39QM7AjVE0pr2vcziWix0KisJ9YZLFplFl142qujPA"
 					 exact: "GXijeroR+hrr8SuZHCjrqw6SwlUhAc6nnu6LA79gWPU="
 				  },
 				}
 			 };
+
 			 capture = p5.createCapture(p5.VIDEO);
-			//  capture = p5.createCapture(constraints);
 			 capture.size(p5.width / vScale, p5.height / vScale);
 
 
@@ -411,7 +404,6 @@ export default function Canvas({ getNoise }) {
 		v = p5.createVector(brightLoc.x, brightLoc.y);
 	}
 
-	// let video;
 
 	function gotDevices(p5, deviceInfos) {
 		if (!navigator.mediaDevices?.enumerateDevices) {
@@ -546,25 +538,13 @@ export default function Canvas({ getNoise }) {
 			setImgCount(0)
 		}
 
-		// if (textCount >= textArray.length - 1) {
-		// 	setTextCount(0)
-		// }
+		if (textCount >= textArray.length - 1) {
+			setTextCount(0)
+		}
 
-		// if (shapeCount % 3 == 0) {
 			setTextCount((prev) => prev += 1)
 			// settextPos(Math.floor(Math.random() * 95))
 			setText(textArray[textCount])
-		// }
-
-
-		// setActiveShapes(_.clone(shapes))
-		// setActiveShapes(() => arrayLimitBool ? _.tail(_.clone(shapes)) : _.clone(shapes))
-
-		// if (arrayLimitBool) {
-		// 	setActiveShapes(_.clone(shapes))
-		// 	setActiveShapes(() => _.tail(activeShapes))
-		// }
-
 	}, [shapes])
 
 	useEffect(() => {
@@ -640,7 +620,7 @@ export default function Canvas({ getNoise }) {
 			style={{
 				backgroundColor: "rgba(0,0,200,1)",
 				// background: "linear-gradient(rgba(0,0,255,1), rgba(0,0,100,1), rgba(0,0,255,1))",
-				cursor: "none",
+				// cursor: "none",
 				zIndex: "10"
 			}}
 		>
@@ -667,7 +647,6 @@ export default function Canvas({ getNoise }) {
 			}
 
 			<Shape shape={shape} noise={noise} live={false} />
-
 			<Text text={text} noise={noise} pos={textPos} />
 
 		</div>
