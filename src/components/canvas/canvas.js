@@ -75,7 +75,7 @@ export default function Canvas({ getNoise }) {
 	// ]
 
 	let textArray = [
-		// "OCEAN VIEW, PARADISE AIR, abdel am meer",
+		"OCEAN VIEW, PARADISE AIR, abdel am meer",
 		'',
 		'',
 		"the ocean as a place",
