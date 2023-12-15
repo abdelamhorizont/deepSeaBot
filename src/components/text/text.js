@@ -1,48 +1,37 @@
 import React from 'react'
-import { useState } from "react";
 
 import './text.scss'
 
 const { motion } = require("framer-motion");
 
-//now every letter gets one noise value spacing -> make it change to some other values
 
 function map_range(value, low1, high1, low2, high2) {
    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
-export default function Text({ text, noise, pos }) {
-   const [noiseArray, setNoiseArray] = useState(noise)
-   const [spacing, setspacing] = useState(0)
 
+export default function Text({ text, noise }) {
    function osc(i) {
-      // setInterval(() => {
-      //    i++
-      //    setspacing(Math.sin(noise[i]) + 1)
-      // }, 5000)
-
       return (
          Math.sin(noise[i]) + 1
       )
    }
 
-   // noise = noise.map((value) => value + 'rem')
-   // console.log(osc(1));
-
    const variants = {
       hidden: { letterSpacing: '0rem' },
       visible: (key) => ({
          letterSpacing: [osc(key) + 'rem', osc(key + 10) + 'rem']
-         // margin: [noise(key) * 5, osc(key + 10) * 5]
-         // letterSpacing: noise
       }),
    }
+
+   const isBrowser = () => typeof window !== "undefined"
+   const windows = isBrowser() && window
 
    String.prototype.map = function (func) {
       let stringArray = this.split("");
 
       let newStringArray = stringArray.map((item, index) => {
-         return func.call(window, item, index, this);
+         return func.call(windows, item, index, this);
       });
 
       return newStringArray.join("");
@@ -65,7 +54,7 @@ export default function Text({ text, noise, pos }) {
             repeatType: "mirror",
             ease: "easeInOut",
             // duration: 1,
-            duration: noise[i]/3,
+            duration: noise[i] / 3,
          }}
          variants={variants}
       >
@@ -74,10 +63,10 @@ export default function Text({ text, noise, pos }) {
    )
 
    return (
-      <div className="text-wrapper">      
-      <motion.div
-         className='text'
-         style={{marginTop: 45 + 'vh'}}
+      <div className="text-wrapper">
+         <motion.div
+            className='text'
+            style={{ marginTop: 45 + 'vh' }}
          // style={{marginTop: pos + 'vh'}}
          // initial="hidden"
          // animate={{ marginLeft: [osc(1) * 5, osc(10) * 5] }}
@@ -88,10 +77,10 @@ export default function Text({ text, noise, pos }) {
          //    ease: "easeInOut",
          //    duration: 1,
          // }}
-      >
-         <p>{text}
-         </p>
-      </motion.div>
+         >
+            <p>{text}
+            </p>
+         </motion.div>
       </div>
    )
 }
